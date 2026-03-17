@@ -6,6 +6,7 @@
   border: 1px solid #dfdfd9;
   border-radius: 18px;
   overflow: hidden;
+  animation: pageFadeIn 0.45s ease-out;
 }
 
 .topbar {
@@ -38,11 +39,18 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease,
+    color 0.18s ease;
 }
 
 .topbar-btn-ghost {
   background: transparent;
   color: #111;
+}
+
+.topbar-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
 .auth-page {
@@ -56,6 +64,7 @@
   border: 1px solid #e5e5df;
   border-radius: 16px;
   padding: 38px 30px 44px;
+  animation: cardFadeUp 0.4s ease-out;
 }
 
 .auth-label {
@@ -147,6 +156,7 @@
   margin-bottom: 42px;
   padding: 28px 24px 30px;
   border-bottom: 1px solid #e3e3de;
+  animation: cardFadeUp 0.42s ease-out;
 }
 
 .hero-label {
@@ -186,6 +196,12 @@
   background: #d8d8d2;
   border: 1px solid #cfcfc8;
   box-shadow: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-preview:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
 
 .hero-tags {
@@ -210,6 +226,7 @@
   border: 1px solid #e5e5df;
   border-radius: 14px;
   padding: 34px 32px;
+  animation: cardFadeUp 0.42s ease-out;
 }
 
 .section-header {
@@ -261,11 +278,12 @@
 .role-card {
   background: #fff;
   padding: 20px 18px 24px;
-  transition: background 0.15s;
+  transition: background 0.18s ease, transform 0.18s ease;
 }
 
 .role-card:hover {
   background: #f7fdf9;
+  transform: translateY(-2px);
 }
 
 .role-pill {
@@ -343,6 +361,12 @@
   border: 1px solid #e8e8e4;
   border-radius: 12px;
   padding: 30px 32px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.feature-block:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
 }
 
 .feature-block.accent {
@@ -410,6 +434,13 @@
   background: #f4f4f2;
   color: #555;
   border: 1px solid #e8e8e4;
+  transition: transform 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.fb-tag:hover {
+  transform: translateY(-1px);
+  border-color: #c8d8cd;
+  background: #f8fcf9;
 }
 
 .fb-tag.green {
@@ -569,6 +600,12 @@
   border: 1px solid #eee;
   border-radius: 10px;
   padding: 16px 18px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.tech-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
 }
 
 .tc-num {
@@ -652,12 +689,13 @@
   padding: 14px 18px;
   border: 1px solid #e8e8e4;
   border-radius: 8px;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
 }
 
 .accept-row:hover {
   border-color: #b8e4c7;
   background: #f7fdf9;
+  transform: translateY(-1px);
 }
 
 .accept-row .ar-num {
@@ -673,6 +711,26 @@
 .accept-row .ar-text {
   font-size: 14px;
   color: #444;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cardFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 900px) {
