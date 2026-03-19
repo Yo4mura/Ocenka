@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ScrollReveal } from './components/ScrollReveal'
 import './App.css'
 
 function App() {
@@ -95,6 +96,17 @@ function App() {
             <br />
             онлайн-<span>курсов</span>
           </div>
+          <div className="hero-subtitle">
+            RBAC • Видео • Задания • Личные кабинеты
+          </div>
+          <div className="hero-cta">
+            <button className="btn-primary" onClick={() => setPage('register')}>
+              Начать обучение
+            </button>
+            <button className="btn-secondary" onClick={() => setPage('login')}>
+              Войти
+            </button>
+          </div>
           <div className="hero-tags">
             <span>#RBAC</span>
             <span>#Streaming</span>
@@ -103,11 +115,67 @@ function App() {
           </div>
         </div>
         <div className="hero-right">
-          <div className="hero-preview" />
+          <div className="hero-browser">
+            <div className="hero-browser-header">
+              <span className="hero-browser-dot" />
+              <span className="hero-browser-dot" />
+              <span className="hero-browser-dot" />
+            </div>
+            <div className="hero-browser-content">
+              <div className="hero-browser-bar bar-1" />
+              <div className="hero-browser-bar bar-2" />
+              <div className="hero-browser-bar bar-3" />
+              <div className="hero-browser-bar bar-4" />
+              <div className="hero-browser-bar bar-5" />
+              <div className="hero-browser-block" />
+            </div>
+          </div>
+          <div className="hero-floating-card card-1">
+            <div className="hero-floating-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" /></svg>
+            </div>
+            <div>
+              <div className="hero-floating-title">Курсы и уроки</div>
+              <div className="hero-floating-desc">Модули, видео, материалы</div>
+            </div>
+          </div>
+          <div className="hero-floating-card card-2">
+            <div className="hero-floating-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div>
+              <div className="hero-floating-title">Проверка заданий</div>
+              <div className="hero-floating-desc">Статусы, комментарии</div>
+            </div>
+          </div>
+          <div className="hero-floating-card card-3">
+            <div className="hero-floating-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+            </div>
+            <div>
+              <div className="hero-floating-title">Личный кабинет</div>
+              <div className="hero-floating-desc">Прогресс, уведомления</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="section" id="roles">
+      <ScrollReveal className="hero-features">
+        <div className="hero-feature-card">
+          <div className="card-title">20 разделов ТЗ</div>
+          <div className="card-desc">Полное описание функционала платформы</div>
+        </div>
+        <div className="hero-feature-card">
+          <div className="card-title">4 роли пользователей</div>
+          <div className="card-desc">Администратор, клиент, ученик, сотрудник</div>
+        </div>
+        <div className="hero-feature-card">
+          <div className="card-title">Веб-формат</div>
+          <div className="card-desc">Адаптивный дизайн, личные кабинеты</div>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal className="section" id="roles">
         <div className="section-header">
           <div className="section-index">01</div>
           <div className="section-info">
@@ -161,9 +229,9 @@ function App() {
             </ul>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
-      <div className="section" id="video">
+      <ScrollReveal className="section" id="video">
         <div className="section-header">
           <div className="section-index">02</div>
           <div className="section-info">
@@ -173,7 +241,7 @@ function App() {
         </div>
         <div className="callout">
           <div className="callout-icon">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
           </div>
@@ -212,9 +280,9 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
-      <div className="section" id="assignments">
+      <ScrollReveal className="section" id="assignments">
         <div className="section-header">
           <div className="section-index">03</div>
           <div className="section-info">
@@ -233,7 +301,7 @@ function App() {
               </div>
             </div>
           </div>
-          <div style={{ padding: '20px 24px 16px' }}>
+          <div className="wide-body">
             <div className="status-flow">
               <span className="status-node sn-0">Не отправлено</span>
               <span className="status-arrow">→</span>
@@ -243,10 +311,10 @@ function App() {
               <span className="status-arrow">→</span>
               <span className="status-node sn-3">Принято</span>
             </div>
-            <div className="status-flow" style={{ marginTop: 8 }}>
+            <div className="status-flow status-flow-alt">
               <span className="status-node sn-4">На доработку</span>
               <span className="status-arrow">→</span>
-              <span style={{ fontSize: 12, color: '#aaa', fontStyle: 'italic' }}>
+              <span className="status-flow-meta">
                 повторная отправка
               </span>
               <span className="status-arrow">→</span>
@@ -279,9 +347,9 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
-      <div className="section" id="acceptance">
+      <ScrollReveal className="section" id="acceptance">
         <div className="section-header">
           <div className="section-index">04</div>
           <div className="section-info">
@@ -323,9 +391,9 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
-      <div className="section">
+      <ScrollReveal className="section">
         <div className="section-header">
           <div className="section-index">05</div>
           <div className="section-info">
@@ -377,9 +445,9 @@ function App() {
             <span className="fb-tag">Отчёты</span>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
-      <div className="section">
+      <ScrollReveal className="section">
         <div className="section-header">
           <div className="section-index">06</div>
           <div className="section-info">
@@ -431,9 +499,9 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
-      <div className="section">
+      <ScrollReveal className="section">
         <div className="section-header">
           <div className="section-index">07</div>
           <div className="section-info">
@@ -495,7 +563,7 @@ function App() {
             </span>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
     </div>
   )
 }
