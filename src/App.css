@@ -255,7 +255,7 @@
 }
 
 .hero-title span {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #0d9488 50%, var(--color-accent) 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0d9488 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -465,11 +465,11 @@
 }
 
 .hero-floating-card.card-2 .hero-floating-icon {
-  background: linear-gradient(135deg, var(--color-accent) 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
 }
 
 .hero-floating-card.card-3 .hero-floating-icon {
-  background: linear-gradient(135deg, var(--color-sky) 0%, #0284c7 100%);
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
 }
 
 .hero-floating-icon svg {
@@ -625,8 +625,8 @@
 }
 
 .pill-student {
-  background: var(--color-accent-light);
-  color: var(--color-accent);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .pill-staff {
@@ -690,12 +690,12 @@
 }
 
 .feature-block.accent {
-  background: linear-gradient(135deg, var(--color-primary-muted) 0%, rgba(99, 102, 241, 0.06) 100%);
+  background: linear-gradient(135deg, var(--color-primary-muted) 0%, var(--color-accent-muted) 100%);
   border-color: rgba(5, 150, 105, 0.2);
 }
 
 .feature-block.dark {
-  background: linear-gradient(135deg, var(--color-primary-muted) 0%, var(--color-accent-muted) 100%);
+  background: linear-gradient(135deg, var(--color-primary-muted) 0%, rgba(13, 148, 136, 0.08) 100%);
   border-color: rgba(5, 150, 105, 0.2);
 }
 
@@ -759,7 +759,7 @@
   gap: 24px;
   align-items: flex-start;
   margin-bottom: 32px;
-  background: linear-gradient(135deg, var(--color-primary-muted) 0%, var(--color-accent-muted) 100%);
+  background: var(--color-primary-muted);
   border: 1px solid rgba(5, 150, 105, 0.2);
 }
 
@@ -867,7 +867,7 @@
 }
 
 .sn-0 { background: var(--color-slate-100); color: var(--color-slate-500); }
-.sn-1 { background: var(--color-accent-light); color: var(--color-accent); }
+.sn-1 { background: var(--color-primary-light); color: var(--color-primary); }
 .sn-2 { background: #fef3c7; color: #b45309; }
 .sn-3 { background: var(--color-primary-light); color: var(--color-primary); }
 .sn-4 { background: #ffedd5; color: #ea580c; }

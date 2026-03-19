@@ -7,15 +7,15 @@
   --color-primary-light: #d1fae5;
   --color-primary-muted: rgba(5, 150, 105, 0.12);
   
-  /* Accent — Indigo */
-  --color-accent: #6366f1;
-  --color-accent-hover: #4f46e5;
-  --color-accent-light: #e0e7ff;
-  --color-accent-muted: rgba(99, 102, 241, 0.1);
+  /* Accent — Green variants */
+  --color-accent: #0d9488;
+  --color-accent-hover: #0f766e;
+  --color-accent-light: #ccfbf1;
+  --color-accent-muted: rgba(13, 148, 136, 0.12);
   
-  /* Accent 2 — Sky */
-  --color-sky: #0ea5e9;
-  --color-sky-light: #e0f2fe;
+  /* Accent 2 — Lighter green */
+  --color-sky: #14b8a6;
+  --color-sky-light: #99f6e4;
   
   /* Neutrals */
   --color-slate-900: #0f172a;
@@ -88,9 +88,9 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(5, 150, 105, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(14, 165, 233, 0.05) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(5, 150, 105, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(13, 148, 136, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(20, 184, 166, 0.05) 0%, transparent 50%);
 }
 
 #root {
