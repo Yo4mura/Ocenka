@@ -2,10 +2,91 @@ import { useState } from 'react'
 import { ScrollReveal } from './components/ScrollReveal'
 import './App.css'
 
-function App() {
-  const [page, setPage] = useState<'home' | 'login' | 'register'>('home')
+type Page = 'home' | 'login' | 'register' | 'profile' | 'admin-panel' | 'course-player'
+type Role = 'guest' | 'user' | 'admin'
 
-  if (page !== 'home') {
+interface Course {
+  id: number
+  title: string
+  description: string
+  price: string
+  lessons: string
+  level: string
+}
+
+function App() {
+  const [page, setPage] = useState<Page>('home')
+  const [role, setRole] = useState<Role>('guest')
+  const [authRole, setAuthRole] = useState<'user' | 'admin'>('user')
+  const [courses, setCourses] = useState<Course[]>([
+    {
+      id: 1,
+      title: 'Frontend с нуля',
+      description: 'HTML, CSS, JavaScript и первый полноценный проект.',
+      price: '12900',
+      lessons: '24',
+      level: 'Начальный',
+    },
+  ])
+  const [courseForm, setCourseForm] = useState({
+    title: '',
+    description: '',
+    price: '',
+    lessons: '',
+    level: 'Базовый',
+  })
+  const [editingCourseId, setEditingCourseId] = useState<number | null>(null)
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null)
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(0)
+  const [completedLessons, setCompletedLessons] = useState<Record<number, number[]>>({})
+
+  const formatKzt = (price: string) => `${price} ₸`
+  const lessonCatalog = [
+    'Введение в курс',
+    'Подготовка окружения',
+    'Основы интерфейса',
+    'Компоненты и структура',
+    'Работа с состоянием',
+    'Маршрутизация и навигация',
+    'Формы и валидация',
+    'Работа с API',
+    'Авторизация и роли',
+    'Тестирование',
+    'Оптимизация и производительность',
+    'Итоговый проект',
+  ]
+  const getLessons = (lessonsRaw: string) => {
+    const total = Math.max(1, Math.min(lessonCatalog.length, Number(lessonsRaw) || 6))
+    return lessonCatalog.slice(0, total)
+  }
+  const openCoursePlayer = (courseId: number) => {
+    setSelectedCourseId(courseId)
+    setCurrentLessonIndex(0)
+    setPage('course-player')
+  }
+  const markLessonDone = (courseId: number, lessonIndex: number) => {
+    setCompletedLessons((prev) => {
+      const prevForCourse = prev[courseId] || []
+      if (prevForCourse.includes(lessonIndex)) return prev
+      return {
+        ...prev,
+        [courseId]: [...prevForCourse, lessonIndex].sort((a, b) => a - b),
+      }
+    })
+  }
+
+  const onAuthSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setRole(authRole)
+    setPage(authRole === 'admin' ? 'admin-panel' : 'profile')
+  }
+
+  const onLogout = () => {
+    setRole('guest')
+    setPage('home')
+  }
+
+  if (page === 'login' || page === 'register') {
     const isLogin = page === 'login'
 
     return (
@@ -31,7 +112,7 @@ function App() {
                 : 'Заполните форму, чтобы получить доступ к курсам и заданиям.'}
             </div>
 
-            <form className="auth-form" onSubmit={(event) => event.preventDefault()}>
+            <form className="auth-form" onSubmit={onAuthSubmit}>
               {!isLogin && (
                 <label className="auth-field">
                   <span>Имя и фамилия</span>
@@ -47,6 +128,17 @@ function App() {
               <label className="auth-field">
                 <span>Пароль</span>
                 <input type="password" placeholder="Минимум 8 символов" />
+              </label>
+
+              <label className="auth-field">
+                <span>Роль для входа (демо)</span>
+                <select
+                  value={authRole}
+                  onChange={(event) => setAuthRole(event.target.value as 'user' | 'admin')}
+                >
+                  <option value="user">Пользователь</option>
+                  <option value="admin">Администратор</option>
+                </select>
               </label>
 
               {!isLogin && (
@@ -74,17 +166,540 @@ function App() {
     )
   }
 
+  if (page === 'profile') {
+    if (role === 'guest') {
+      return (
+        <div className="root">
+          <header className="topbar">
+            <div className="topbar-brand">TooOcenka LMS</div>
+            <div className="topbar-actions">
+              <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('home')}>
+                На главную
+              </button>
+              <button className="topbar-btn" onClick={() => setPage('login')}>
+                Войти
+              </button>
+            </div>
+          </header>
+          <div className="admin-page">
+            <div className="admin-card">
+              <div className="auth-label">Требуется авторизация</div>
+              <div className="auth-title">Войдите, чтобы открыть профиль</div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    const progressPercent = 68
+    const inProgressCourses = courses.slice(0, 3)
+
+    return (
+      <div className="root">
+        <header className="topbar">
+          <div className="topbar-brand">TooOcenka LMS</div>
+          <div className="topbar-actions">
+            <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('home')}>
+              На главную
+            </button>
+            {role === 'admin' && (
+              <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('admin-panel')}>
+                Админ-панель
+              </button>
+            )}
+            <button className="topbar-btn" onClick={onLogout}>
+              Выйти
+            </button>
+          </div>
+        </header>
+
+        <div className="profile-page">
+          <div className="profile-hero">
+            <div className="profile-avatar">АБ</div>
+            <div className="profile-main">
+              <div className="auth-label">Личный кабинет</div>
+              <h1>Алиакбар Бейсембаев</h1>
+              <p>
+                {role === 'admin'
+                  ? 'Роль: администратор. Здесь видны прогресс, активные курсы и быстрый переход в панель.'
+                  : 'Роль: пользователь. Здесь видны прогресс обучения, активные курсы и задачи.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="profile-stats">
+            <article className="profile-stat-card">
+              <span>Активные курсы</span>
+              <strong>{inProgressCourses.length}</strong>
+            </article>
+            <article className="profile-stat-card">
+              <span>Прогресс обучения</span>
+              <strong>{progressPercent}%</strong>
+            </article>
+            <article className="profile-stat-card">
+              <span>Заданий сдано</span>
+              <strong>14</strong>
+            </article>
+            <article className="profile-stat-card">
+              <span>Уведомлений</span>
+              <strong>3</strong>
+            </article>
+          </div>
+
+          <div className="profile-grid">
+            <section className="profile-card">
+              <h2>Мой прогресс</h2>
+              <div className="profile-progress-track">
+                <div className="profile-progress-bar" style={{ width: `${progressPercent}%` }} />
+              </div>
+              <p>Вы завершили {progressPercent}% учебного плана за месяц.</p>
+            </section>
+
+            <section className="profile-card">
+              <h2>Быстрые действия</h2>
+              <div className="profile-actions">
+                {role === 'admin' ? (
+                  <button className="admin-action-btn" onClick={() => setPage('admin-panel')}>
+                    Перейти в админ-панель
+                  </button>
+                ) : (
+                  <button
+                    className="admin-action-btn admin-action-btn-ghost"
+                    onClick={() => openCoursePlayer(inProgressCourses[0]?.id ?? courses[0].id)}
+                  >
+                    Продолжить обучение
+                  </button>
+                )}
+              </div>
+            </section>
+          </div>
+
+          <section className="profile-card profile-courses">
+            <h2>Текущие курсы</h2>
+            <div className="admin-courses-grid">
+              {inProgressCourses.map((course) => (
+                <article className="admin-course-card" key={course.id}>
+                  <div className="admin-course-head">
+                    <h3>{course.title}</h3>
+                    <span>{course.level}</span>
+                  </div>
+                  <p>{course.description}</p>
+                  <div className="admin-course-meta">
+                    <strong>{formatKzt(course.price)}</strong>
+                    <span>{course.lessons} уроков</span>
+                  </div>
+                  <div className="admin-list-actions">
+                    <button className="admin-action-btn" onClick={() => openCoursePlayer(course.id)}>
+                      Проходить курс
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    )
+  }
+
+  if (page === 'course-player') {
+    if (role === 'guest') {
+      return (
+        <div className="root">
+          <header className="topbar">
+            <div className="topbar-brand">TooOcenka LMS</div>
+            <div className="topbar-actions">
+              <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('home')}>
+                На главную
+              </button>
+              <button className="topbar-btn" onClick={() => setPage('login')}>
+                Войти
+              </button>
+            </div>
+          </header>
+          <div className="admin-page">
+            <div className="admin-card">
+              <div className="auth-label">Требуется авторизация</div>
+              <div className="auth-title">Войдите, чтобы проходить курс</div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    const activeCourse = courses.find((course) => course.id === selectedCourseId) || courses[0]
+    const lessons = getLessons(activeCourse.lessons)
+    const safeLessonIndex = Math.min(currentLessonIndex, lessons.length - 1)
+    const doneLessons = completedLessons[activeCourse.id] || []
+
+    return (
+      <div className="root">
+        <header className="topbar">
+          <div className="topbar-brand">TooOcenka LMS</div>
+          <div className="topbar-actions">
+            <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('profile')}>
+              Назад в профиль
+            </button>
+            {role === 'admin' && (
+              <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('admin-panel')}>
+                Админ-панель
+              </button>
+            )}
+            <button className="topbar-btn" onClick={onLogout}>
+              Выйти
+            </button>
+          </div>
+        </header>
+
+        <div className="course-page">
+          <aside className="course-sidebar">
+            <div className="auth-label">Курс</div>
+            <h2>{activeCourse.title}</h2>
+            <p>{activeCourse.description}</p>
+            <div className="course-progress-line">
+              <div
+                className="course-progress-fill"
+                style={{ width: `${Math.round((doneLessons.length / lessons.length) * 100)}%` }}
+              />
+            </div>
+            <div className="course-progress-text">
+              Пройдено: {doneLessons.length} / {lessons.length} уроков
+            </div>
+
+            <div className="course-lessons">
+              {lessons.map((lesson, index) => (
+                <button
+                  className={`course-lesson-btn ${index === safeLessonIndex ? 'is-active' : ''} ${doneLessons.includes(index) ? 'is-done' : ''}`}
+                  key={`${lesson}-${index}`}
+                  onClick={() => setCurrentLessonIndex(index)}
+                >
+                  <span>{index + 1}. {lesson}</span>
+                  {doneLessons.includes(index) && <em>Готово</em>}
+                </button>
+              ))}
+            </div>
+          </aside>
+
+          <main className="course-content">
+            <div className="course-video-card">
+              <div className="course-video-head">
+                <strong>Урок {safeLessonIndex + 1}</strong>
+                <span>{lessons[safeLessonIndex]}</span>
+              </div>
+              <div className="course-video-mock">
+                <div className="course-video-play">▶</div>
+              </div>
+              <div className="course-video-actions">
+                <button
+                  className="admin-action-btn"
+                  onClick={() => markLessonDone(activeCourse.id, safeLessonIndex)}
+                >
+                  Отметить как пройденный
+                </button>
+                <button
+                  className="admin-action-btn admin-action-btn-ghost"
+                  onClick={() =>
+                    setCurrentLessonIndex((prev) => Math.min(prev + 1, lessons.length - 1))
+                  }
+                >
+                  Следующий урок
+                </button>
+              </div>
+            </div>
+
+            <div className="course-material-card">
+              <h3>Материалы урока</h3>
+              <ul>
+                <li>Конспект в PDF</li>
+                <li>Пример кода</li>
+                <li>Домашнее задание</li>
+              </ul>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
+  }
+
+  if (page === 'admin-panel') {
+    if (role !== 'admin') {
+      return (
+        <div className="root">
+          <header className="topbar">
+            <div className="topbar-brand">TooOcenka LMS</div>
+            <div className="topbar-actions">
+              <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('home')}>
+                На главную
+              </button>
+              <button
+                className="topbar-btn"
+                onClick={() => {
+                  setAuthRole('admin')
+                  setPage('login')
+                }}
+              >
+                Войти как админ
+              </button>
+            </div>
+          </header>
+          <div className="admin-page">
+            <div className="admin-card">
+              <div className="auth-label">Доступ ограничен</div>
+              <div className="auth-title">Только для администратора</div>
+              <div className="auth-subtitle">
+                Эта панель доступна только с ролью администратора.
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    const onCreateOrUpdateCourse = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+      if (!courseForm.title.trim()) return
+
+      if (editingCourseId) {
+        setCourses((prev) =>
+          prev.map((course) =>
+            course.id === editingCourseId
+              ? {
+                  ...course,
+                  title: courseForm.title.trim(),
+                  description: courseForm.description.trim() || 'Описание будет добавлено позже.',
+                  price: courseForm.price.trim() || '0',
+                  lessons: courseForm.lessons.trim() || '0',
+                  level: courseForm.level,
+                }
+              : course
+          )
+        )
+      } else {
+        setCourses((prev) => [
+          {
+            id: Date.now(),
+            title: courseForm.title.trim(),
+            description: courseForm.description.trim() || 'Описание будет добавлено позже.',
+            price: courseForm.price.trim() || '0',
+            lessons: courseForm.lessons.trim() || '0',
+            level: courseForm.level,
+          },
+          ...prev,
+        ])
+      }
+
+      setCourseForm({ title: '', description: '', price: '', lessons: '', level: 'Базовый' })
+      setEditingCourseId(null)
+    }
+
+    const onStartEdit = (course: Course) => {
+      setEditingCourseId(course.id)
+      setCourseForm({
+        title: course.title,
+        description: course.description,
+        price: course.price,
+        lessons: course.lessons,
+        level: course.level,
+      })
+    }
+
+    const onDeleteCourse = (id: number) => {
+      setCourses((prev) => prev.filter((course) => course.id !== id))
+      if (editingCourseId === id) {
+        setEditingCourseId(null)
+        setCourseForm({ title: '', description: '', price: '', lessons: '', level: 'Базовый' })
+      }
+    }
+
+    return (
+      <div className="root">
+        <header className="topbar">
+          <div className="topbar-brand">TooOcenka LMS</div>
+          <div className="topbar-actions">
+            <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('home')}>
+              На главную
+            </button>
+            <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('profile')}>
+              Профиль
+            </button>
+            <button className="topbar-btn" onClick={onLogout}>
+              Выйти
+            </button>
+          </div>
+        </header>
+
+        <div className="admin-page">
+          <div className="admin-card">
+            <div className="auth-label">Админ-панель</div>
+            <div className="auth-title">
+              {editingCourseId ? 'Редактирование курса' : 'Создание курса'}
+            </div>
+            <div className="auth-subtitle">
+              Управляйте курсами здесь: создавайте, редактируйте и удаляйте без перехода на главную.
+            </div>
+
+            <form className="auth-form" onSubmit={onCreateOrUpdateCourse}>
+              <label className="auth-field">
+                <span>Название курса</span>
+                <input
+                  type="text"
+                  placeholder="Например, React + TypeScript"
+                  value={courseForm.title}
+                  onChange={(event) =>
+                    setCourseForm((prev) => ({ ...prev, title: event.target.value }))
+                  }
+                  required
+                />
+              </label>
+
+              <label className="auth-field">
+                <span>Описание</span>
+                <input
+                  type="text"
+                  placeholder="Кратко о программе курса"
+                  value={courseForm.description}
+                  onChange={(event) =>
+                    setCourseForm((prev) => ({ ...prev, description: event.target.value }))
+                  }
+                />
+              </label>
+
+              <div className="admin-grid">
+                <label className="auth-field">
+                  <span>Цена (тенге)</span>
+                  <input
+                    type="text"
+                    placeholder="12900"
+                    value={courseForm.price}
+                    onChange={(event) =>
+                      setCourseForm((prev) => ({ ...prev, price: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="auth-field">
+                  <span>Уроков</span>
+                  <input
+                    type="text"
+                    placeholder="24"
+                    value={courseForm.lessons}
+                    onChange={(event) =>
+                      setCourseForm((prev) => ({ ...prev, lessons: event.target.value }))
+                    }
+                  />
+                </label>
+              </div>
+
+              <label className="auth-field">
+                <span>Уровень</span>
+                <input
+                  type="text"
+                  placeholder="Базовый / Средний / Продвинутый"
+                  value={courseForm.level}
+                  onChange={(event) =>
+                    setCourseForm((prev) => ({ ...prev, level: event.target.value }))
+                  }
+                />
+              </label>
+
+              <div className="admin-actions">
+                <button className="auth-submit" type="submit">
+                  {editingCourseId ? 'Сохранить изменения' : 'Создать курс'}
+                </button>
+                {editingCourseId && (
+                  <button
+                    className="admin-action-btn admin-action-btn-ghost"
+                    type="button"
+                    onClick={() => {
+                      setEditingCourseId(null)
+                      setCourseForm({
+                        title: '',
+                        description: '',
+                        price: '',
+                        lessons: '',
+                        level: 'Базовый',
+                      })
+                    }}
+                  >
+                    Отменить
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          <div className="admin-courses">
+            <div className="auth-label">Курсы</div>
+            <div className="auth-title">Управление курсами</div>
+            <div className="auth-subtitle">Всего курсов: {courses.length}</div>
+
+            <div className="admin-courses-grid">
+              {courses.map((course) => (
+                <article className="admin-course-card" key={course.id}>
+                  <div className="admin-course-head">
+                    <h3>{course.title}</h3>
+                    <span>{course.level}</span>
+                  </div>
+                  <p>{course.description}</p>
+                  <div className="admin-course-meta">
+                    <strong>{formatKzt(course.price)}</strong>
+                    <span>{course.lessons} уроков</span>
+                  </div>
+                  <div className="admin-list-actions">
+                    <button className="admin-action-btn" onClick={() => onStartEdit(course)}>
+                      Редактировать
+                    </button>
+                    <button
+                      className="admin-action-btn admin-action-btn-ghost"
+                      onClick={() => openCoursePlayer(course.id)}
+                    >
+                      Открыть курс
+                    </button>
+                    <button
+                      className="admin-action-btn admin-danger-btn"
+                      onClick={() => onDeleteCourse(course.id)}
+                    >
+                      Удалить
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="root">
       <header className="topbar">
         <div className="topbar-brand">TooOcenka LMS</div>
         <div className="topbar-actions">
-          <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('login')}>
-            Вход
-          </button>
-          <button className="topbar-btn" onClick={() => setPage('register')}>
-            Регистрация
-          </button>
+          {role === 'guest' ? (
+            <>
+              <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('login')}>
+                Вход
+              </button>
+              <button className="topbar-btn" onClick={() => setPage('register')}>
+                Регистрация
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('profile')}>
+                Профиль
+              </button>
+              {role === 'admin' && (
+                <button className="topbar-btn topbar-btn-ghost" onClick={() => setPage('admin-panel')}>
+                  Админ-панель
+                </button>
+              )}
+              <button className="topbar-btn" onClick={onLogout}>
+                Выйти
+              </button>
+            </>
+          )}
         </div>
       </header>
 
@@ -100,12 +715,21 @@ function App() {
             RBAC • Видео • Задания • Личные кабинеты
           </div>
           <div className="hero-cta">
-            <button className="btn-primary" onClick={() => setPage('register')}>
+            <button
+              className="btn-primary"
+              onClick={() => setPage(role === 'guest' ? 'register' : role === 'admin' ? 'admin-panel' : 'profile')}
+            >
               Начать обучение
             </button>
-            <button className="btn-secondary" onClick={() => setPage('login')}>
-              Войти
-            </button>
+            {role === 'guest' ? (
+              <button className="btn-secondary" onClick={() => setPage('login')}>
+                Войти
+              </button>
+            ) : (
+              <button className="btn-secondary" onClick={() => setPage('profile')}>
+                Открыть кабинет
+              </button>
+            )}
           </div>
           <div className="hero-tags">
             <span>#RBAC</span>
@@ -443,6 +1067,23 @@ function App() {
             <span className="fb-tag">Уведомления</span>
             <span className="fb-tag">Настройки</span>
             <span className="fb-tag">Отчёты</span>
+          </div>
+          <div className="admin-actions">
+            {role === 'admin' ? (
+              <button className="admin-action-btn" onClick={() => setPage('admin-panel')}>
+                Открыть админ-панель
+              </button>
+            ) : (
+              <button
+                className="admin-action-btn admin-action-btn-ghost"
+                onClick={() => {
+                  setAuthRole('admin')
+                  setPage('login')
+                }}
+              >
+                Войти как админ
+              </button>
+            )}
           </div>
         </div>
       </ScrollReveal>
